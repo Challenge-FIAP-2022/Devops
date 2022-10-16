@@ -1,0 +1,26 @@
+/* Requires the Docker Pipeline plugin */
+pipeline {
+    agent any
+    stages {
+        stage('Extrair Codigo Fonte'){
+         steps{
+            checkout([$class: 'GitSCM', branches: [[name: '*/dev']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/Challenge-FIAP-2022/Almanak-Mobile.git']]])
+         }
+      }
+        stage('build') {
+            environment {
+                expocredentials = credentials("ExpoUser")
+            }
+            
+            steps {
+                sh 'node --version'
+                sh 'expo --version'
+                sh "expo login -u $expocredentials_USR -p $expocredentials_PSW"
+                sh 'expo whoami'
+                sh 'eas whoami'
+                /*sh 'eas build --platform android --non-interactive'*/
+            }
+            
+        }
+    }
+}      
